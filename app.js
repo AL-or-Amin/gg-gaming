@@ -1,6 +1,6 @@
-// GANTI BAGIAN ATAS KODE APP.JS ANDA MENJADI SEPERTI INI:
-import { initializeApp } from "https://gstatic.com";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://gstatic.com";
+// GANTI BAGIAN ATAS KODE APP.JS ANDA DENGAN URL INI:
+import { initializeApp } from "https://unpkg.com";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://unpkg.com";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCjl4HLx59rXukZFvr0YQrHOwtuU9E0Lsk",
@@ -11,6 +11,9 @@ const firebaseConfig = {
     appId: "1:442853131602:web:3fe28211c433100cdfe68b",
     measurementId: "G-JBX54D0MGF"
 };
+
+// ... sisa kode ke bawah tidak perlu diubah, biarkan seperti sebelumnya ...
+
 
 // ... sisa kode ke bawahnya tetap sama persis seperti yang saya berikan sebelumnya ...
 
