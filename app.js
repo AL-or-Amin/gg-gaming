@@ -1,15 +1,18 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+// GANTI BAGIAN ATAS KODE APP.JS ANDA MENJADI SEPERTI INI:
+import { initializeApp } from "https://gstatic.com";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://gstatic.com";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCjl4HLx59rXukZFvr0YQrHOwtuU9E0Lsk",
-    authDomain: "gg-gaming-66321.firebaseapp.com", // ✅ PERBAIKAN 1: Format authDomain diperbaiki
+    authDomain: "://firebaseapp.com", 
     projectId: "gg-gaming-66321",
     storageBucket: "gg-gaming-66321.firebasestorage.app",
     messagingSenderId: "442853131602",
     appId: "1:442853131602:web:3fe28211c433100cdfe68b",
     measurementId: "G-JBX54D0MGF"
 };
+
+// ... sisa kode ke bawahnya tetap sama persis seperti yang saya berikan sebelumnya ...
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
