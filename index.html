@@ -16,8 +16,6 @@ index.html<!DOCTYPE html>
         #tempatFoto { width: 100%; max-width: 900px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
 
         /* Desain Kartu Galeri Baru yang Informatif */
-        .kartu-foto { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; display: flex; flex-direction: column; }
-        .kartu-foto img { width: 100%; height: 180px; object-fit: cover; }
         .info-foto { padding: 15px; font-size: 13px; color: #555; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
         .waktu { font-weight: bold; color: #2c3e50; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         .koordinat { color: #7f8c8d; font-family: monospace; }
@@ -33,9 +31,6 @@ index.html<!DOCTYPE html>
         <video id="videoKamera" autoplay playsinline></video>
         <div id="teksStatus" class="status">Mencari...</div>
     </div>
-
-    <!-- Kontainer galeri foto (sebelumnya hilang, jadi galeri tidak pernah tampil) -->
-    <div id="tempatFoto"></div>
 
     <!-- Canvas tersembunyi dengan resolusi HD -->
     <canvas id="canvasGambar" style="display:none;"></canvas>
@@ -55,8 +50,6 @@ index.html<!DOCTYPE html>
         
         
         /* Desain Kartu Galeri Baru yang Informatif */
-        .kartu-foto { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; display: flex; flex-direction: column; }
-        .kartu-foto img { width: 100%; height: 180px; object-fit: cover; }
         .info-foto { padding: 15px; font-size: 13px; color: #555; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
         .waktu { font-weight: bold; color: #2c3e50; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         .koordinat { color: #7f8c8d; font-family: monospace; }
